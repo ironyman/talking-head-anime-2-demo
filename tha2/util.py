@@ -19,9 +19,9 @@ def torch_save(content, file_name):
         torch.save(content, f)
 
 
-def torch_load(file_name):
+def torch_load(file_name, device: torch.device = None):
     with open(file_name, 'rb') as f:
-        return torch.load(f)
+        return torch.load(f, map_location=device)
 
 
 def srgb_to_linear(x):

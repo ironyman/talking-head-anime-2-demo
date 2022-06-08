@@ -127,7 +127,7 @@ class FiveStepPoserComputationProtocol(CachedComputationProtocol):
             raise RuntimeError("Unsupported key: " + key)
 
 
-def load_eyebrow_decomposer(file_name: str):
+def load_eyebrow_decomposer(file_name: str, device=None):
     factory = EyebrowDecomposer00Factory(
         EyebrowDecomposer00Args(
             image_size=128,
@@ -143,12 +143,12 @@ def load_eyebrow_decomposer(file_name: str):
                 nonlinearity_factory=ReLUFactory(inplace=True))))
     #print("Loading the eyebrow decomposer ... ", end="")
     module = factory.create()
-    module.load_state_dict(torch_load(file_name))
+    module.load_state_dict(torch_load(file_name, device))
     #print("DONE!!!")
     return module
 
 
-def load_eyebrow_morphing_combiner(file_name: str):
+def load_eyebrow_morphing_combiner(file_name: str, device=None):
     factory = EyebrowMorphingCombiner00Factory(
         EyebrowMorphingCombiner00Args(
             image_size=128,
@@ -165,12 +165,12 @@ def load_eyebrow_morphing_combiner(file_name: str):
                 nonlinearity_factory=ReLUFactory(inplace=True))))
     #print("Loading the eyebrow morphing conbiner ... ", end="")
     module = factory.create()
-    module.load_state_dict(torch_load(file_name))
+    module.load_state_dict(torch_load(file_name, device))
     #print("DONE!!!")
     return module
 
 
-def load_face_morpher(file_name: str):
+def load_face_morpher(file_name: str, device=None):
     factory = FaceMorpher08Factory(
         FaceMorpher08Args(
             image_size=192,
@@ -187,23 +187,23 @@ def load_face_morpher(file_name: str):
                 nonlinearity_factory=ReLUFactory(inplace=False))))
     #print("Loading the face morpher ... ", end="")
     module = factory.create()
-    module.load_state_dict(torch_load(file_name))
+    module.load_state_dict(torch_load(file_name, device))
     #print("DONE")
     return module
 
 
-def load_face_rotater(file_name: str):
+def load_face_rotater(file_name: str, device=None):
     #print("Loading the face rotater ... ", end="")
     module = TwoAlgoFaceRotatorFactory().create()
-    module.load_state_dict(torch_load(file_name))
+    module.load_state_dict(torch_load(file_name, device))
     #print("DONE!!!")
     return module
 
 
-def load_combiner(file_name: str):
+def load_combiner(file_name: str, device=None):
     #print("Loading the combiner ... ", end="")
     module = CombinerFactory().create()
-    module.load_state_dict(torch_load(file_name))
+    module.load_state_dict(torch_load(file_name, device))
     #print("DONE!!!")
     return module
 
@@ -266,15 +266,15 @@ def create_poser(
 
     loaders = {
         KEY_EYEBROW_DECOMPOSER:
-            lambda: load_eyebrow_decomposer(module_file_names[KEY_EYEBROW_DECOMPOSER]),
+            lambda: load_eyebrow_decomposer(module_file_names[KEY_EYEBROW_DECOMPOSER], device),
         KEY_EYEBROW_MORPHING_COMBINER:
-            lambda: load_eyebrow_morphing_combiner(module_file_names[KEY_EYEBROW_MORPHING_COMBINER]),
+            lambda: load_eyebrow_morphing_combiner(module_file_names[KEY_EYEBROW_MORPHING_COMBINER], device),
         KEY_FACE_MORPHER:
-            lambda: load_face_morpher(module_file_names[KEY_FACE_MORPHER]),
+            lambda: load_face_morpher(module_file_names[KEY_FACE_MORPHER], device),
         KEY_FACE_ROTATER:
-            lambda: load_face_rotater(module_file_names[KEY_FACE_ROTATER]),
+            lambda: load_face_rotater(module_file_names[KEY_FACE_ROTATER], device),
         KEY_COMBINER:
-            lambda: load_combiner(module_file_names[KEY_COMBINER]),
+            lambda: load_combiner(module_file_names[KEY_COMBINER], device),
     }
     return GeneralPoser02(
         module_loaders=loaders,
